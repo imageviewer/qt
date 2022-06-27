@@ -1,4 +1,3 @@
-// the imageviewer project
 #include "imageviewer.h"
 
 #include <QApplication>
