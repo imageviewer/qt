@@ -19,5 +19,11 @@ void MySlider::mousePressEvent(QMouseEvent *ev)
     int value = per*(this->maximum() - this->minimum()) + this->minimum();
     this->setValue(value);
 
+    image->undo();
+
+    if(value >= 0)
+        image->Bright1(value);
+    else image->Darker1(value);
+
     QSlider::mousePressEvent(ev);
 }

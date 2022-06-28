@@ -7,7 +7,7 @@
 #include <QLabel>
 #include <QSlider>
 #include <QObject>
-#include <QMouseEvent>
+#include <QSpinBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ImageViewer; }
@@ -26,8 +26,8 @@ public:
     void open();
     void saveAs();
     void save();
-    void Bright1();
-    void Darker1();
+    void Bright1(int brightness);
+    void Darker1(int brightness);
     void lightContrast();
     void greyScale();
     void warm();
@@ -73,33 +73,13 @@ public:
     QAction *coldAct;
     QAction *saturateAct;
     QAction *undoAct;
+    QAction *redoAct;
 //    QAction *copyAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *normalSizeAct;
     QAction *fitToWindowAct;
 
-//    void mousePressEvent(QMouseEvent *ev);
-
-//    class MySlider : public QSlider
-//    {
-//    public:
-//        MySlider(QWidget *parent = nullptr): QSlider(parent) {}
-//        ~MySlider() {}
-
-//        void mousePressEvent(QMouseEvent *ev)
-//        {
-//            int X = ev->pos().x();
-//            double per = X*1.0/this->width();
-//            int value = per*(this->maximum() - this->minimum()) + this->minimum();
-//            this->setValue(value);
-
-////            ImageViewer *parent = (ImageViewer *) ((char*)this - offsetof(ImageViewer, ));
-//            Bright1(value);
-
-//            QSlider::mousePressEvent(ev);
-//        }
-//    };
 };
 #endif // IMAGEVIEWER_H
 

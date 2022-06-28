@@ -8,6 +8,7 @@
 class MySlider : public QSlider
 {
 public:
+    ImageViewer *image;
     MySlider(QWidget *parent = nullptr);
     ~MySlider();
     void mousePressEvent(QMouseEvent *ev);

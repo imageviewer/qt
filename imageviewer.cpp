@@ -20,6 +20,8 @@
 #include <QStatusBar>
 #include <QSpinBox>
 #include <QSlider>
+#include <QSplitter>
+#include <QTextEdit>
 
 //! [0]
 ImageViewer::ImageViewer(QWidget *parent)
@@ -38,6 +40,24 @@ ImageViewer::ImageViewer(QWidget *parent)
     scrollArea->setVisible(false);
     setCentralWidget(scrollArea);
 
+//    QSplitter *splitter = new QSplitter(this);
+//    splitter->setOrientation(Qt::Vertical);
+//    splitter->setFixedSize(1000, 1000);
+//    splitter->addWidget(scrollArea);
+
+//    QSplitter *splitter2 = new QSplitter(this);
+//    splitter2->setFixedSize(500, 500);
+//    QTextEdit *tnt = new QTextEdit(this);
+//    splitter2->addWidget(tnt);
+
+//    QSplitter *splitter3 = new QSplitter(this);
+//    splitter3->setFixedSize(300, 300);
+//    QTextEdit *tnx = new QTextEdit(this);
+//    splitter3->addWidget(tnx);
+//    QTextEdit *tnzj = new QTextEdit(this);
+//    splitter3->addWidget(tnzj);
+
+
     createActions();
 
     resize(QGuiApplication::primaryScreen()->availableSize() * 3 / 5);
@@ -45,18 +65,6 @@ ImageViewer::ImageViewer(QWidget *parent)
 
 //! [0]
 //! [2]
-//ImageViewer::ImageViewer(const ImageViewer & view): QMainWindow(nullptr), imageLabel(view.imageLabel), scrollArea(view.scrollArea)
-//{
-//    createActions();
-
-//    resize(QGuiApplication::primaryScreen()->availableSize() * 3 / 5);
-//}
-//void ImageViewer::operator=(const ImageViewer & view)
-//{
-//    QMainWindow(nullptr);
-//    imageLabel = view.imageLabel;
-//    scrollArea = view.scrollArea;
-//}
 
 bool ImageViewer::loadFile(const QString &fileName)
 {
@@ -88,8 +96,6 @@ void ImageViewer::setImage(const QImage &newImage)
     it=image_Vector.end()-1;//最后一个元素对应的迭代器指针
 
     imageLabel->setPixmap(QPixmap::fromImage(*it));
-//    image_Vector.push_back(image);
-//! [4]
     scaleFactor = 1.0;
 
     scrollArea->setVisible(true);
@@ -166,10 +172,10 @@ void ImageViewer::saveAs()
     while (dialog.exec() == QDialog::Accepted && !saveFile(dialog.selectedFiles().constFirst())) {}
 }
 
-void ImageViewer::Bright1()
+void ImageViewer::Bright1(int brightness)
 {
 
-    int brightness = 10;
+//    int brightness = 10;
     uchar *line =image.scanLine(0);
     uchar *pixel;
 
@@ -189,8 +195,13 @@ void ImageViewer::Bright1()
 //        if (image.colorSpace().isValid())
 //            image.convertToColorSpace(QColorSpace::SRgb);
 
-        image_Vector.push_back(image);
-        it=image_Vector.end()-1;
+        if(it == image_Vector.end() - 1) {
+            image_Vector.push_back(image);
+            it=image_Vector.end()-1;
+        }
+        else {
+            *(++it) = image;
+        }
 
         imageLabel->setPixmap(QPixmap::fromImage(*it));
 
@@ -198,10 +209,10 @@ void ImageViewer::Bright1()
             imageLabel->adjustSize();
 }
 
-void ImageViewer::Darker1()
+void ImageViewer::Darker1(int brightness)
 {
 
-    int brightness = -10;
+//    int brightness = -10;
     uchar *line =image.scanLine(0);
     uchar *pixel;
 
@@ -219,8 +230,14 @@ void ImageViewer::Darker1()
             line += image.bytesPerLine();
         }
 
-        image_Vector.push_back(image);
-        it=image_Vector.end()-1;
+
+        if(it == image_Vector.end() - 1) {
+            image_Vector.push_back(image);
+            it=image_Vector.end()-1;
+        }
+        else {
+            *(++it) = image;
+        }
 
         imageLabel->setPixmap(QPixmap::fromImage(*it));
 
@@ -245,8 +262,13 @@ void ImageViewer::lightContrast()
 
     }
 
-    image_Vector.push_back(image);
-    it=image_Vector.end()-1;
+    if(it == image_Vector.end() - 1) {
+        image_Vector.push_back(image);
+        it=image_Vector.end()-1;
+    }
+    else {
+        *(++it) = image;
+    }
 
     imageLabel->setPixmap(QPixmap::fromImage(*it));
 
@@ -267,8 +289,13 @@ void ImageViewer::greyScale(){
     }
 
 
-    image_Vector.push_back(image);
-    it=image_Vector.end()-1;
+    if(it == image_Vector.end() - 1) {
+        image_Vector.push_back(image);
+        it=image_Vector.end()-1;
+    }
+    else {
+        *(++it) = image;
+    }
 
     imageLabel->setPixmap(QPixmap::fromImage(*it));
 
@@ -298,8 +325,13 @@ void ImageViewer::warm(){
     }
 
 
-    image_Vector.push_back(image);
-    it=image_Vector.end()-1;
+    if(it == image_Vector.end() - 1) {
+        image_Vector.push_back(image);
+        it=image_Vector.end()-1;
+    }
+    else {
+        *(++it) = image;
+    }
 
     imageLabel->setPixmap(QPixmap::fromImage(*it));
 
@@ -329,8 +361,13 @@ void ImageViewer::cold(){
     }
 
 
-    image_Vector.push_back(image);
-    it=image_Vector.end()-1;
+    if(it == image_Vector.end() - 1) {
+        image_Vector.push_back(image);
+        it=image_Vector.end()-1;
+    }
+    else {
+        *(++it) = image;
+    }
 
     imageLabel->setPixmap(QPixmap::fromImage(*it));
     if (!fitToWindowAct->isChecked())
@@ -362,8 +399,13 @@ void ImageViewer::saturation(){
     }
 
 
-    image_Vector.push_back(image);
-    it=image_Vector.end()-1;
+    if(it == image_Vector.end() - 1) {
+        image_Vector.push_back(image);
+        it=image_Vector.end()-1;
+    }
+    else {
+        *(++it) = image;
+    }
 
     imageLabel->setPixmap(QPixmap::fromImage(*it));
 
@@ -417,20 +459,27 @@ void ImageViewer::about()
 //! [16]
 void ImageViewer::undo()
 {
-    if(it != image_Vector.begin())
+    if(it - 2 != image_Vector.begin())
     {
         it--;
         image = *it;
-        image_Vector.pop_back();
+        imageLabel->setPixmap(QPixmap::fromImage(*it));
+    }
+}
+void ImageViewer::redo()
+{
+//    imageLabel->setPixmap(QPixmap::fromImage(*(image_Vector.begin()+2)));
+    if(it != image_Vector.end() - 1)
+    {
+        it++;
+        image = *it;
         imageLabel->setPixmap(QPixmap::fromImage(*it));
     }
 }
 
 
-
 //! [17]
 void ImageViewer::createActions()
-//! [17] //! [18]
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 
@@ -449,7 +498,7 @@ void ImageViewer::createActions()
 
     fileMenu->addSeparator();
 
-    QAction *exitAct = fileMenu->addAction(tr("E&xit"), this, &QWidget::close);
+    QAction *exitAct = fileMenu->addAction(tr("&Exit"), this, &QWidget::close);
     exitAct->setShortcut(tr("Ctrl+Q"));
 
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
@@ -485,6 +534,10 @@ void ImageViewer::createActions()
     undoAct = editMenu->addAction(tr("&Undo"), this, &ImageViewer::undo);
     undoAct->setShortcut(tr("Ctrl+U"));
     undoAct->setEnabled(true);
+
+    redoAct = editMenu->addAction(tr("&Redo"), this, &ImageViewer::redo);
+    redoAct->setShortcut(tr("Ctrl+R"));
+    redoAct->setEnabled(true);
 //    QAction *pasteAct = editMenu->addAction(tr("&Paste"), this, &ImageViewer::paste);
 //    pasteAct->setShortcut(QKeySequence::Paste);
 
@@ -514,30 +567,31 @@ void ImageViewer::createActions()
     helpMenu->addAction(tr("&About"), this, &ImageViewer::about);
     helpMenu->addAction(tr("About &Qt"), this, &QApplication::aboutQt);
 
-    int nmin = 0;
-    int nmax = 300;
+    int nmin = -100;
+    int nmax = 100;
     int nsinglestep = 10;
 
-    QSpinBox *spinbox = new QSpinBox(this);
-    spinbox->setMinimum(nmin);
-    spinbox->setMaximum(nmax);
-    spinbox->setSingleStep(nsinglestep);
+//    QSpinBox *spinbox = new QSpinBox(this);
+//    spinbox->setMinimum(nmin);
+//    spinbox->setMaximum(nmax);
+//    spinbox->setSingleStep(nsinglestep);
+//    spinbox->setGeometry(rect().x() + 250, rect().y() + 400, 30, 25);
 
     MySlider *slider = new MySlider(this);
+    slider->image = this;
     slider->setOrientation(Qt::Horizontal);
     slider->setMinimum(nmin);
     slider->setMaximum(nmax);
     slider->setSingleStep(nsinglestep);
+    slider->setGeometry(rect().x() + 300, rect().y() + 400, 300, 25);
 
-    connect(spinbox, SIGNAL(valueChanged(int)), slider, SLOT(setvalue(int)));
-    connect(slider, SIGNAL(valueChanged(int)), spinbox, SLOT(setvalue(int)));
+//    connect(spinbox, SIGNAL(valueChanged(int)), slider, SLOT(setvalue(int)));
+//    connect(slider, SIGNAL(valueChanged(int)), spinbox, SLOT(setvalue(int)));
 
-    spinbox->setValue(10);
+//    spinbox->setValue(0);
 
 }
-//! [18]
 
-//! [21]
 void ImageViewer::updateActions()
 //! [21] //! [22]
 {
@@ -565,7 +619,6 @@ void ImageViewer::scaleImage(double factor)
 
 //! [25]
 void ImageViewer::adjustScrollBar(QScrollBar *scrollBar, double factor)
-//! [25] //! [26]
 {
     scrollBar->setValue(int(factor * scrollBar->value()
                             + ((factor - 1) * scrollBar->pageStep()/2)));
