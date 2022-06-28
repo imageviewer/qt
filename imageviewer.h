@@ -5,6 +5,9 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QLabel>
+#include <QSlider>
+#include <QObject>
+#include <QMouseEvent>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ImageViewer; }
@@ -13,18 +16,16 @@ QT_END_NAMESPACE
 class ImageViewer : public QMainWindow
 {
     Q_OBJECT
-
 public:
     ImageViewer(QWidget *parent = nullptr);
+//    ImageViewer(const ImageViewer & view);
+//    void operator=(const ImageViewer & view);
     bool loadFile(const QString &);
 
-public slots:
+//public slots:
     void open();
     void saveAs();
     void save();
-//    void print();
-//    void copy();
-    // void paste();
     void Bright1();
     void Darker1();
     void lightContrast();
@@ -37,6 +38,10 @@ public slots:
     void normalSize();
     void fitToWindow();
     void about();
+    std::vector<QImage> image_Vector;// 存储图像的Vvctor容器
+    std::vector<QImage>::iterator it;// vector迭代器
+    void undo();
+    void redo();
 
 public:
     void createActions();
@@ -67,11 +72,34 @@ public:
     QAction *warmAct;
     QAction *coldAct;
     QAction *saturateAct;
+    QAction *undoAct;
 //    QAction *copyAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *normalSizeAct;
     QAction *fitToWindowAct;
+
+//    void mousePressEvent(QMouseEvent *ev);
+
+//    class MySlider : public QSlider
+//    {
+//    public:
+//        MySlider(QWidget *parent = nullptr): QSlider(parent) {}
+//        ~MySlider() {}
+
+//        void mousePressEvent(QMouseEvent *ev)
+//        {
+//            int X = ev->pos().x();
+//            double per = X*1.0/this->width();
+//            int value = per*(this->maximum() - this->minimum()) + this->minimum();
+//            this->setValue(value);
+
+////            ImageViewer *parent = (ImageViewer *) ((char*)this - offsetof(ImageViewer, ));
+//            Bright1(value);
+
+//            QSlider::mousePressEvent(ev);
+//        }
+//    };
 };
 #endif // IMAGEVIEWER_H
 

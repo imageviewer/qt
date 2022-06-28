@@ -1,4 +1,5 @@
 #include "imageviewer.h"
+#include "myslider.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -17,12 +18,17 @@
 #include <QScrollBar>
 #include <QStandardPaths>
 #include <QStatusBar>
+#include <QSpinBox>
+#include <QSlider>
 
 //! [0]
 ImageViewer::ImageViewer(QWidget *parent)
    : QMainWindow(parent), imageLabel(new QLabel)
    , scrollArea(new QScrollArea)
 {
+    //初始化容器大小
+    image_Vector.resize(2);
+
     imageLabel->setBackgroundRole(QPalette::Base);
     imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     imageLabel->setScaledContents(true);
@@ -39,18 +45,24 @@ ImageViewer::ImageViewer(QWidget *parent)
 
 //! [0]
 //! [2]
+//ImageViewer::ImageViewer(const ImageViewer & view): QMainWindow(nullptr), imageLabel(view.imageLabel), scrollArea(view.scrollArea)
+//{
+//    createActions();
+
+//    resize(QGuiApplication::primaryScreen()->availableSize() * 3 / 5);
+//}
+//void ImageViewer::operator=(const ImageViewer & view)
+//{
+//    QMainWindow(nullptr);
+//    imageLabel = view.imageLabel;
+//    scrollArea = view.scrollArea;
+//}
 
 bool ImageViewer::loadFile(const QString &fileName)
 {
     QImageReader reader(fileName);
     reader.setAutoTransform(true);
     const QImage newImage = reader.read();
-//    if (newImage.isNull()) {
-//        QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
-//                                 tr("Cannot load %1: %2")
-//                                 .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
-//        return false;
-//    }
 //! [2]
     path = fileName;
     setImage(newImage);
@@ -71,7 +83,12 @@ void ImageViewer::setImage(const QImage &newImage)
     image = newImage;
     if (image.colorSpace().isValid())
         image.convertToColorSpace(QColorSpace::SRgb);
-    imageLabel->setPixmap(QPixmap::fromImage(image));
+
+    image_Vector.push_back(image);//插入vector容器
+    it=image_Vector.end()-1;//最后一个元素对应的迭代器指针
+
+    imageLabel->setPixmap(QPixmap::fromImage(*it));
+//    image_Vector.push_back(image);
 //! [4]
     scaleFactor = 1.0;
 
@@ -82,6 +99,8 @@ void ImageViewer::setImage(const QImage &newImage)
 
     if (!fitToWindowAct->isChecked())
         imageLabel->adjustSize();
+
+
 }
 
 //! [4]
@@ -116,6 +135,7 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
         dialog.setDirectory(picturesLocations.isEmpty() ? QDir::currentPath() : picturesLocations.last());
     }
 
+
     QStringList mimeTypeFilters;
     const QByteArrayList supportedMimeTypes = acceptMode == QFileDialog::AcceptOpen
         ? QImageReader::supportedMimeTypes() : QImageWriter::supportedMimeTypes();
@@ -146,66 +166,6 @@ void ImageViewer::saveAs()
     while (dialog.exec() == QDialog::Accepted && !saveFile(dialog.selectedFiles().constFirst())) {}
 }
 
-//! [5]
-//void ImageViewer::print()
-////! [5] //! [6]
-//{
-//    Q_ASSERT(!imageLabel->pixmap(Qt::ReturnByValue).isNull());
-//#if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printdialog)
-////! [6] //! [7]
-//    QPrintDialog dialog(&printer, this);
-////! [7] //! [8]
-//    if (dialog.exec()) {
-//        QPainter painter(&printer);
-//        QPixmap pixmap = imageLabel->pixmap(Qt::ReturnByValue);
-//        QRect rect = painter.viewport();
-//        QSize size = pixmap.size();
-//        size.scale(rect.size(), Qt::KeepAspectRatio);
-//        painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
-//        painter.setWindow(pixmap.rect());
-//        painter.drawPixmap(0, 0, pixmap);
-//    }
-//#endif
-//}
-////! [8]
-
-//void ImageViewer::copy()
-//{
-//#ifndef QT_NO_CLIPBOARD
-//    QGuiApplication::clipboard()->setImage(image);
-//#endif // !QT_NO_CLIPBOARD
-//}
-
-//#ifndef QT_NO_CLIPBOARD
-//static QImage clipboardImage()
-//{
-//    if (const QMimeData *mimeData = QGuiApplication::clipboard()->mimeData()) {
-//        if (mimeData->hasImage()) {
-//            const QImage image = qvariant_cast<QImage>(mimeData->imageData());
-//            if (!image.isNull())
-//                return image;
-//        }
-//    }
-//    return QImage();
-//}
-//#endif // !QT_NO_CLIPBOARD
-
-//void ImageViewer::paste()
-//{
-//#ifndef QT_NO_CLIPBOARD
-//    const QImage newImage = clipboardImage();
-//    if (newImage.isNull()) {
-//        statusBar()->showMessage(tr("No image in clipboard"));
-//    } else {
-//        setImage(newImage);
-//        setWindowFilePath(QString());
-//        const QString message = tr("Obtained image from clipboard, %1x%2, Depth: %3")
-//            .arg(newImage.width()).arg(newImage.height()).arg(newImage.depth());
-//        statusBar()->showMessage(message);
-//    }
-//#endif // !QT_NO_CLIPBOARD
-//}
-
 void ImageViewer::Bright1()
 {
 
@@ -228,7 +188,11 @@ void ImageViewer::Bright1()
         }
 //        if (image.colorSpace().isValid())
 //            image.convertToColorSpace(QColorSpace::SRgb);
-        imageLabel->setPixmap(QPixmap::fromImage(image));
+
+        image_Vector.push_back(image);
+        it=image_Vector.end()-1;
+
+        imageLabel->setPixmap(QPixmap::fromImage(*it));
 
         if (!fitToWindowAct->isChecked())
             imageLabel->adjustSize();
@@ -254,7 +218,11 @@ void ImageViewer::Darker1()
 
             line += image.bytesPerLine();
         }
-        imageLabel->setPixmap(QPixmap::fromImage(image));
+
+        image_Vector.push_back(image);
+        it=image_Vector.end()-1;
+
+        imageLabel->setPixmap(QPixmap::fromImage(*it));
 
         if (!fitToWindowAct->isChecked())
             imageLabel->adjustSize();
@@ -276,7 +244,11 @@ void ImageViewer::lightContrast()
         }
 
     }
-    imageLabel->setPixmap(QPixmap::fromImage(image));
+
+    image_Vector.push_back(image);
+    it=image_Vector.end()-1;
+
+    imageLabel->setPixmap(QPixmap::fromImage(*it));
 
     if (!fitToWindowAct->isChecked())
         imageLabel->adjustSize();
@@ -294,7 +266,11 @@ void ImageViewer::greyScale(){
         }
     }
 
-    imageLabel->setPixmap(QPixmap::fromImage(image));
+
+    image_Vector.push_back(image);
+    it=image_Vector.end()-1;
+
+    imageLabel->setPixmap(QPixmap::fromImage(*it));
 
     if (!fitToWindowAct->isChecked())
         imageLabel->adjustSize();
@@ -321,7 +297,11 @@ void ImageViewer::warm(){
         }
     }
 
-    imageLabel->setPixmap(QPixmap::fromImage(image));
+
+    image_Vector.push_back(image);
+    it=image_Vector.end()-1;
+
+    imageLabel->setPixmap(QPixmap::fromImage(*it));
 
     if (!fitToWindowAct->isChecked())
         imageLabel->adjustSize();
@@ -348,8 +328,11 @@ void ImageViewer::cold(){
         }
     }
 
-    imageLabel->setPixmap(QPixmap::fromImage(image));
 
+    image_Vector.push_back(image);
+    it=image_Vector.end()-1;
+
+    imageLabel->setPixmap(QPixmap::fromImage(*it));
     if (!fitToWindowAct->isChecked())
         imageLabel->adjustSize();
 }
@@ -378,7 +361,11 @@ void ImageViewer::saturation(){
         }
     }
 
-    imageLabel->setPixmap(QPixmap::fromImage(image));
+
+    image_Vector.push_back(image);
+    it=image_Vector.end()-1;
+
+    imageLabel->setPixmap(QPixmap::fromImage(*it));
 
     if (!fitToWindowAct->isChecked())
         imageLabel->adjustSize();
@@ -428,6 +415,18 @@ void ImageViewer::about()
             tr("<p>欢迎使用由阿对对对组出品的图像编辑软件！祝您使用愉快！</p>"));
 }
 //! [16]
+void ImageViewer::undo()
+{
+    if(it != image_Vector.begin())
+    {
+        it--;
+        image = *it;
+        image_Vector.pop_back();
+        imageLabel->setPixmap(QPixmap::fromImage(*it));
+    }
+}
+
+
 
 //! [17]
 void ImageViewer::createActions()
@@ -482,6 +481,10 @@ void ImageViewer::createActions()
     saturateAct = editMenu->addAction(tr("&Saturate"), this, &ImageViewer::saturation);
     saturateAct->setShortcut(tr("Ctrl+T"));
     saturateAct->setEnabled(true);
+
+    undoAct = editMenu->addAction(tr("&Undo"), this, &ImageViewer::undo);
+    undoAct->setShortcut(tr("Ctrl+U"));
+    undoAct->setEnabled(true);
 //    QAction *pasteAct = editMenu->addAction(tr("&Paste"), this, &ImageViewer::paste);
 //    pasteAct->setShortcut(QKeySequence::Paste);
 
@@ -510,6 +513,27 @@ void ImageViewer::createActions()
 
     helpMenu->addAction(tr("&About"), this, &ImageViewer::about);
     helpMenu->addAction(tr("About &Qt"), this, &QApplication::aboutQt);
+
+    int nmin = 0;
+    int nmax = 300;
+    int nsinglestep = 10;
+
+    QSpinBox *spinbox = new QSpinBox(this);
+    spinbox->setMinimum(nmin);
+    spinbox->setMaximum(nmax);
+    spinbox->setSingleStep(nsinglestep);
+
+    MySlider *slider = new MySlider(this);
+    slider->setOrientation(Qt::Horizontal);
+    slider->setMinimum(nmin);
+    slider->setMaximum(nmax);
+    slider->setSingleStep(nsinglestep);
+
+    connect(spinbox, SIGNAL(valueChanged(int)), slider, SLOT(setvalue(int)));
+    connect(slider, SIGNAL(valueChanged(int)), spinbox, SLOT(setvalue(int)));
+
+    spinbox->setValue(10);
+
 }
 //! [18]
 
@@ -524,9 +548,7 @@ void ImageViewer::updateActions()
     zoomOutAct->setEnabled(!fitToWindowAct->isChecked());
     normalSizeAct->setEnabled(!fitToWindowAct->isChecked());
 }
-//! [22]
 
-//! [23]
 void ImageViewer::scaleImage(double factor)
 //! [23] //! [24]
 {

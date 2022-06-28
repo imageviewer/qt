@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    imageviewer.cpp
+    imageviewer.cpp \
+    myslider.cpp
 
 HEADERS += \
-    imageviewer.h
+    imageviewer.h \
+    myslider.h
 
 FORMS += \
     imageviewer.ui
