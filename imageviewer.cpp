@@ -285,6 +285,12 @@ void ImageViewer::setImage(const QImage &newImage)
 bool ImageViewer::saveFile(const QString &fileName)
 {
     QImageWriter writer(fileName);
+   if (!writer.write(image)) {
+        QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
+                                 tr("Cannot write %1: %2")
+                                 .arg(QDir::toNativeSeparators(fileName), writer.errorString()));
+        return false;
+    }
     const QString message = tr("Wrote \"%1\"").arg(QDir::toNativeSeparators(fileName));
     statusBar()->showMessage(message);
     return true;
