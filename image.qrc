@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/fig">
+        <file>1</file>
+        <file>2</file>
+        <file>grey.png</file>
+    </qresource>
+</RCC>
