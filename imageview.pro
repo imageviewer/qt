@@ -10,12 +10,10 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    imageviewer.cpp \
-    myslider.cpp
+    imageviewer.cpp
 
 HEADERS += \
-    imageviewer.h \
-    myslider.h
+    imageviewer.h
 
 FORMS += \
     imageviewer.ui
@@ -24,3 +22,7 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    image.qrc \
+    img.qrc

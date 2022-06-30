@@ -1,52 +1,68 @@
-#ifndef IMAGEVIEWER_H
-#define IMAGEVIEWER_H
-
 #include <QMainWindow>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QLabel>
+#include <QPushButton>
+#include <QToolBar>
 #include <QSlider>
 #include <QObject>
-#include <QSpinBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ImageViewer; }
 QT_END_NAMESPACE
 
+class MySlider;
+
 class ImageViewer : public QMainWindow
 {
     Q_OBJECT
-public:
-    ImageViewer(QWidget *parent = nullptr);
-//    ImageViewer(const ImageViewer & view);
-//    void operator=(const ImageViewer & view);
-    bool loadFile(const QString &);
 
-//public slots:
+    friend class MySlider;
+public:
+    MySlider *brightslider;
+    MySlider *contrastslider;
+    MySlider *warmslider;
+    MySlider *saturationslider;
+    ImageViewer(QWidget *parent = nullptr);
+    bool loadFile(const QString &);
+    bool loadFile1(const QString &fileName);
+
     void open();
     void saveAs();
     void save();
-    void Bright1(int brightness);
-    void Darker1(int brightness);
-    void lightContrast();
+    void Bright(int brightness);
+    void Bright1();
+    void Darker1();
+    void lightContrast(int light, int delta);
+    void lightContrast1();
+    void lightContrast2();
+    void reverse_contrast(int contrast);
     void greyScale();
-    void warm();
-    void cold();
-    void saturation();
+    void warm(int dalta);
+    void warm1();
+    void cold1();
+    void saturation(int dalta);
+    void saturation1();
+    void saturation2();
     void zoomIn();
     void zoomOut();
     void normalSize();
     void fitToWindow();
     void about();
-    std::vector<QImage> image_Vector;// 存储图像的Vvctor容器
-    std::vector<QImage>::iterator it;// vector迭代器
+    std::vector<QImage> image_Vector;
+    std::vector<QImage>::iterator it;
+    std::vector<std::pair<int,int> > q;
+    std::vector<std::pair<int,int> >::iterator q_it;
+    void VectorChange(int kindno, int delta);
+    void sliderrest();
     void undo();
     void redo();
 
-public:
     void createActions();
+    void createbuttom();
     void createMenus();
     void updateActions();
+    void fitToWindow1();
     bool saveFile(const QString &fileName);
     void setImage(const QImage &newImage);
     void scaleImage(double factor);
@@ -58,29 +74,36 @@ public:
     double scaleFactor = 1;
     QString path;
 
-//#if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
-//    QPrinter printer;
-//#endif
-
     QAction *saveAsAct;
     QAction *saveAct;
-//    QAction *printAct;
-    QAction *contrastAct;
+    QAction *contrastaddAct;
+    QAction *contrastdelAct;
     QAction *brightAct;
     QAction *darkAct;
     QAction *greyAct;
     QAction *warmAct;
     QAction *coldAct;
-    QAction *saturateAct;
+    QAction *saturateaddAct;
+    QAction *saturatedelAct;
     QAction *undoAct;
     QAction *redoAct;
-//    QAction *copyAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *normalSizeAct;
     QAction *fitToWindowAct;
-
+private:
+    Ui::ImageViewer *ui;
 };
-#endif // IMAGEVIEWER_H
+
+class MySlider : public QSlider
+{
+public:
+    int kindno;
+    int changed_value;
+    ImageViewer *image;
+    MySlider(int kindno_, QWidget *parent = nullptr);
+    ~MySlider();
+    void mousePressEvent(QMouseEvent *ev);
+};
 
 
