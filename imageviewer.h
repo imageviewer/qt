@@ -105,5 +105,3 @@ public:
     ~MySlider();
     void mousePressEvent(QMouseEvent *ev);
 };
-
-
